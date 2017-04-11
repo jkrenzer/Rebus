@@ -1,0 +1,43 @@
+#ifndef VISITORS_HPP
+#define VISITORS_HPP
+#include <iostream>
+
+namespace Rebus
+{
+    
+    /**
+     * @brief Function to declare visitable members of classes.
+     * 
+     * @param Action p_Action:...
+     * @param MemberType p_MemberType:...
+     * @param action p_action:...
+     * @param member p_member:...
+     * @param name p_name:...
+     * @param description p_description:...
+     */
+    template <class Action, typename MemberType>
+    void member(Action& action, MemberType& member, const std::string& name)
+    {
+        action(member,  name);
+    }
+    
+    template <class Action, typename MemberType>
+    void hasOne(Action& action, MemberType* member, const std::string& name)
+    {
+        action.link(member,  name);
+    }
+    
+    template <class Action, typename MemberType, template <typename> class STLContainerType>
+    void hasMany(Action& action, STLContainerType<MemberType>& members, const std::string& name)
+    {
+        action.links(members,  name); //TODO What do we do to get the members?
+    }
+    
+    template <class ParentType, class Action, class CurrentType>
+    void inherit(Action& action, CurrentType* currentThis)
+    {
+        ParentType* inherited = static_cast<ParentType*>(currentThis);
+        inherited->description(action);
+    }
+}
+#endif
