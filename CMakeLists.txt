@@ -42,7 +42,13 @@ find_package(Doxygen)
 add_executable(test_visit src/test.cpp)
 target_link_libraries(test_visit jsoncpp)
 
-add_executable(rebus main.cpp)
-target_link_libraries(rebus ${Boost_LIBRARIES})
+#add_executable(rebus main.cpp)
+#target_link_libraries(rebus ${Boost_LIBRARIES})
 
-install(TARGETS rebus RUNTIME DESTINATION bin)
+install(TARGETS test_visit RUNTIME DESTINATION bin)
+
+#Unit-Testing
+
+enable_testing()
+
+add_test(json_roundtrip test_visit)
