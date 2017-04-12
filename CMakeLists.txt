@@ -40,7 +40,6 @@ find_package(Doxygen)
 # link_directories(${LINK_DIRS} ${Boost_LIBRARIES} ${LibXML++_LIBRARIES} ${glibmm_LIBRARIES} build/)
 
 add_executable(test_visit src/test.cpp)
-target_link_libraries(test_visit jsoncpp)
 
 #add_executable(rebus main.cpp)
 #target_link_libraries(rebus ${Boost_LIBRARIES})
