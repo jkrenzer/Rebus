@@ -5,6 +5,8 @@ dist: trusty
 
 addons:
   apt:
+    sources:
+      - ubuntu-toolchain-r-test
     packages:
       - valgrind
       - g++-4.9
