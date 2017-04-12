@@ -3,14 +3,6 @@ language: cpp
 sudo: reguired
 dist: trusty
 
-addons:
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-    packages:
-      - valgrind
-      - g++-4.9
-
 env:
   global:
     - CTEST_EXT_COLOR_OUTPUT=TRUE
@@ -21,15 +13,24 @@ matrix:
                 - os: linux
                   compiler: gcc
                   env: CTEST_TARGET_SYSTEM=Linux-gcc CTEST_MODEL=Nightly COMPILER=g++-4.9
-
+                  addons:
+                          apt:
+                                  sources:
+                                          - ubuntu-toolchain-r-test
+                                  packages:
+                                          - valgrind
+                                          - g++-4.9
                   before_install:
                           - sudo apt-get -qq update
                           - sudo apt-get install -y libboost1.55-dev 
-                - os: osx
-                  compiler: clang
-                  env: CTEST_TARGET_SYSTEM=MacOS-clang CTEST_MODEL=Nightly COMPILER=g++-4.9
-                  before_install:
-                          - brew update
-                          - brew install boost
+                            # make sure CXX is correctly set
+                          - if [[ "${COMPILER}" != "" ]]; then export CXX=${COMPILER}; fi
 
-script: mkdir build && cd build && cmake ../ && make && make test
+script: 
+                          - uname -a
+                          - $CXX --version
+                          - mkdir build && cd build 
+                          - cmake .. 
+                          - cmake --build . 
+                          - ctest -V
+                          - cd ..
