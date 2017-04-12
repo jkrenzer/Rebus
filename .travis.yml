@@ -13,13 +13,21 @@ env:
     - CTEST_EXT_COLOR_OUTPUT=TRUE
     - CTEST_BUILD_FLAGS=-j4
 
+
+
 matrix:
         include:
                 - os: linux
                   compiler: gcc
                   env: CTEST_TARGET_SYSTEM=Linux-gcc    CTEST_MODEL=Nightly
+                  before_install:
+                          - sudo apt-get -qq update
+                          - sudo apt-get install -y libboost1.55-dev
                 - os: osx
                   compiler: clang
                   env: CTEST_TARGET_SYSTEM=Windows-clang  CTEST_MODEL=Nightly
+                  before_install:
+                          - brew update
+                          - brew install boost
 
 script: mkdir build && cd build && cmake ../ && make && make test
