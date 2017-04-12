@@ -15,22 +15,19 @@ env:
   global:
     - CTEST_EXT_COLOR_OUTPUT=TRUE
     - CTEST_BUILD_FLAGS=-j4
-    - COMPILER=g++-4.9 
-    - SPECIAL=valgrind
-
-
 
 matrix:
         include:
                 - os: linux
                   compiler: gcc
-                  env: CTEST_TARGET_SYSTEM=Linux-gcc    CTEST_MODEL=Nightly
+                  env: CTEST_TARGET_SYSTEM=Linux-gcc CTEST_MODEL=Nightly COMPILER=g++-4.9
+
                   before_install:
                           - sudo apt-get -qq update
                           - sudo apt-get install -y libboost1.55-dev 
                 - os: osx
                   compiler: clang
-                  env: CTEST_TARGET_SYSTEM=Windows-clang  CTEST_MODEL=Nightly
+                  env: CTEST_TARGET_SYSTEM=MacOS-clang CTEST_MODEL=Nightly COMPILER=g++-4.9
                   before_install:
                           - brew update
                           - brew install boost
