@@ -1,10 +1,11 @@
+[![Build Status](https://travis-ci.org/jmankiewicz/Rebus.svg?branch=master)](https://travis-ci.org/jmankiewicz/Rebus) [![GitHub issues](https://img.shields.io/github/issues/badges/shields.svg)]() [![Code Climate](https://img.shields.io/codeclimate/coverage/github/jmankiewicz/Rebus.svg)]() 
+[![Code Climate](https://img.shields.io/codeclimate/github/jmankiewicz/Rebus.svg)]()
+
+Also see the [Dashboard] for more information on the builds and tests.
+
+---
+
 # Rebus
-
-[![Build Status](https://travis-ci.org/jmankiewicz/Rebus.svg?branch=master)](https://travis-ci.org/jmankiewicz/Rebus)
-
-[![GitHub issues](https://img.shields.io/github/issues/badges/shields.svg)]()
-
-[![Code Climate](https://img.shields.io/codeclimate/coverage/github/triAGENS/ashikawa-core.svg)]()
 
 Rebus is targeted to become a slim C++ JSON ORM and RPC framework.
 
