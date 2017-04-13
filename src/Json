@@ -38,6 +38,7 @@ namespace Rebus
             };
         }
         
+        
         /**
         * @brief Wrapper class for Json-library (nlohmann::json)
         * 
@@ -47,38 +48,47 @@ namespace Rebus
         class Json :  public JsonLib::json
         {
         public:
+        
+            Json(const Json& other) : JsonLib::json(other)
+            {}
+        
+            Json(JsonLib::json& other) : JsonLib::json(other)
+            {}
             
-            using JsonLib::json::json;                      // Inherit constructors
-                        
-          static Json diff(const Json& newJson, const Json& oldJson, const std::string& path = "")
-            {
-                auto diff = JsonLib::json::diff(newJson,  oldJson,  path);
-                for( auto it = diff.begin(); it != diff.end(); it++)
+            Json() : JsonLib::json()
+            {}
+            
+            using JsonLib::json::operator=;
+            
+            static Json diff(const JsonLib::json& newJson, const JsonLib::json& oldJson, const std::string& path = "")
                 {
-                    if (*it->find("op") == "replace")
+                    auto diff = JsonLib::json::diff(newJson,  oldJson,  path);
+                    for( auto it = diff.begin(); it != diff.end(); it++)
                     {
-                        auto value_it = it->find("value");
-                        auto path_it = it->find("path");
-                        if (value_it->is_string() and value_it->get<std::string>().size() > 31)
+                        if (*it->find("op") == "replace")
                         {
-                            const std::string path = *path_it;
-                            JsonLib::json::json_pointer ptr(path);
-                            const std::string oldString = oldJson.at(ptr);
-                            const std::string newString = newJson.at(ptr);
-                            diff_match_patch<std::string> dmp;
-                            dmp.Diff_Timeout = 0.0;
-                            auto diffs = dmp.diff_main(oldString,  newString);
-                            dmp.diff_cleanupEfficiency(diffs);
-                            auto patches = dmp.patch_make(diffs);
-                            std::string diffValue = dmp.patch_toText(patches);
-                            *value_it = diffValue;
-                            (*it)["diff"] = true;
+                            auto value_it = it->find("value");
+                            auto path_it = it->find("path");
+                            if (value_it->is_string() and value_it->get<std::string>().size() > 31)
+                            {
+                                const std::string path = *path_it;
+                                JsonLib::json::json_pointer ptr(path);
+                                const std::string oldString = oldJson.at(ptr);
+                                const std::string newString = newJson.at(ptr);
+                                diff_match_patch<std::string> dmp;
+                                dmp.Diff_Timeout = 0.0;
+                                auto diffs = dmp.diff_main(newString, oldString);
+                                dmp.diff_cleanupEfficiency(diffs);
+                                auto patches = dmp.patch_make(diffs);
+                                std::string diffValue = dmp.patch_toText(patches);
+                                *value_it = diffValue;
+                                (*it)["diff"] = true;
+                            }
                         }
                     }
+                    return diff;
+                    
                 }
-                return diff;
-                
-            }
             
           Json patch(const Json& patch)
             {
@@ -98,10 +108,14 @@ namespace Rebus
                         auto patches = dmp.patch_fromText(*value_it);
                         auto result = dmp.patch_apply(patches, oldString);
                         *value_it = std::get<0>(result);
-                        (*it)["diff"] = false;
+                        //Cleaning up our stuff before we call patch.
+                        it->erase("diff");
                     }
                 }
-                return JsonLib::json::patch(patch_local);
+                auto patched = JsonLib::json::patch(patch_local);
+                std::cout << "Patched:" << std::endl;
+                std::cout << patched.dump(4) << std::endl;
+                return patched;
             }
             
         };

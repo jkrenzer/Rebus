@@ -17,15 +17,35 @@ set(BUILD_SHARED_LIBS TRUE)
 
 add_compile_options(-std=c++11) #Enable C++11 support
 # 
-# if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug" AND NOT MINGW)
-#  message("Enabling GCC Debug-Flags")
-#  add_compile_options(-g -O0) #Enable debugging-output, no-optimization (for valgrind and gdb)
-#  set(CMAKE_VERBOSE_MAKEFILE ON)
-#  elseif("${CMAKE_BUILD_TYPE}" STREQUAL "Debug" AND MINGW)
-#  message("Enabling GCC Debug-Flags with DWARF output")
-#  add_compile_options(-gdwarf-4 -O0)
-#  set(CMAKE_VERBOSE_MAKEFILE ON)
-# endif()
+if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug" AND NOT MINGW)
+  message("Enabling GCC Debug- and Analysis-Flags")
+  add_compile_options(-g -O0 -Wall -W -Wshadow -Wunused-variable -Wunused-parameter -Wunused-function -Wunused -Wno-system-headers -Wno-deprecated -Woverloaded-virtual -Wwrite-strings) #Enable debugging-output, no-optimization (for valgrind and gdb)
+  set(CMAKE_VERBOSE_MAKEFILE ON)
+  
+  elseif("${CMAKE_BUILD_TYPE}" STREQUAL "Debug" AND MINGW)
+  message("Enabling GCC Debug-Flags with DWARF output")
+  add_compile_options(-gdwarf-4 -O0 -Wall -W -Wshadow -Wunused-variable -Wunused-parameter -Wunused-function -Wunused -Wno-system-headers -Wno-deprecated -Woverloaded-virtual -Wwrite-strings)
+  set(CMAKE_VERBOSE_MAKEFILE ON)
+ 
+endif()
+
+if("${CMAKE_BUILD_TYPE}" STREQUAL "Coverage" AND NOT MINGW)
+  message("Enabling GCC Debug- and Analysis-Flags")
+  add_compile_options(-g -O0 -Wall -W --coverage -fprofile-arcs -ftest-coverage) #Enable debugging-output, no-optimization (for valgrind and gdb)
+  set(CMAKE_C_FLAGS="-g -O0 -Wall -W --coverage -fprofile-arcs -ftest-coverage")
+  set(CMAKE_VERBOSE_MAKEFILE ON)
+  
+  add_executable(test_coverage tests/coverage.cpp)
+  target_link_libraries(test_coverage gcov)
+  add_test(coverage test_coverage)
+  
+  elseif("${CMAKE_BUILD_TYPE}" STREQUAL "Coverage" AND MINGW)
+  message("Enabling GCC Debug-Flags with DWARF output")
+  add_compile_options(-gdwarf-4 -g -O0 -Wall -W --coverage -fprofile-arcs -ftest-coverage)
+  set(CMAKE_VERBOSE_MAKEFILE ON)
+ 
+endif()
+ 
 # 
 # set(BOOST_ALL_DYN_LINK TRUE)
 # set(Boost_DETAILED_FAILURE_MSG "ON")
@@ -36,18 +56,22 @@ add_compile_options(-std=c++11) #Enable C++11 support
 find_package(Doxygen)
 # find_package(Jsoncpp REQUIRED)
 
- include_directories(${INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/include)
+ include_directories(${INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/src)
 # link_directories(${LINK_DIRS} ${Boost_LIBRARIES} ${LibXML++_LIBRARIES} ${glibmm_LIBRARIES} build/)
 
-add_executable(test_visit src/test.cpp)
+add_executable(test_json_diff tests/json_diff.cpp)
+add_executable(test_cpp_json_roundtrip tests/cpp_json_roundtrip.cpp)
+add_executable(test_inheritance tests/inheritance.cpp)
 
 #add_executable(rebus main.cpp)
 #target_link_libraries(rebus ${Boost_LIBRARIES})
 
-install(TARGETS test_visit RUNTIME DESTINATION bin)
+#install(TARGETS test_visit RUNTIME DESTINATION bin)
 
 #Unit-Testing
 
 enable_testing()
 
-add_test(json_roundtrip test_visit)
+add_test(json_diff test_json_diff)
+add_test(cpp_json_roundtrip test_cpp_json_roundtrip)
+add_test(inheritance test_inheritance)
