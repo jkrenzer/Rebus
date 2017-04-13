@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 2.8.12)
-project(rebus)
-enable_testing()
+include(CTest)
 set(PROJECT_NAME Rebus)
 set(PROJECT_BRIEF_DESCRIPTION "C++ JSON ORM")
 set(DOCUMENTATION_DIR ${CMAKE_CURRENT_SOURCE_DIR}/doc)
@@ -91,6 +90,8 @@ add_executable(test_inheritance tests/inheritance.cpp)
 #install(TARGETS test_visit RUNTIME DESTINATION bin)
 
 #Unit-Testing
+
+configure_file(CTestCustom.cmake CTestCustom.cmake)
 
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Coverage")
   target_link_libraries(test_json_diff gcov)
