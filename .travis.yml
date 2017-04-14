@@ -21,7 +21,7 @@ matrix:
                                           - valgrind
                                           - g++-4.9
                           code_climate:
-                                 repo_token: 54bb6b4e88c97d912140ca77ed5660a7df0da72ea5385f222ed55cd09
+                                 repo_token: 54bb6b4e88c97d912140ca77ed5660a7df0da72ea5385f222ed55cd0970dce2f
                                  
                   before_install:
                           - sudo apt-get -qq update
