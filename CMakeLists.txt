@@ -42,7 +42,7 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Coverage" AND NOT MINGW)
 endif()
 
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Coverage")
-  add_custom_target(coverage
+  add_custom_target(coverage_report
 
 		# Cleanup lcov
 		${LCOV_EXECUTABLE} --directory . --zerocounters
@@ -52,16 +52,23 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Coverage")
 
 		# Capturing lcov counters and generating report
 		COMMAND ${LCOV_EXECUTABLE} --directory . --capture --output-file coverage.info
-		COMMAND ${LCOV_EXECUTABLE} --remove coverage.info '${CMAKE_CURRENT_SOURCE_DIR}/tests/*' '/usr/*' '${CMAKE_CURRENT_SOURCE_DIR}/include/*' --output-file coverage.cleaned
-		COMMAND ${GENHTML_EXECUTABLE} -o $ coverage coverage.cleaned
-		COMMAND ${CMAKE_COMMAND} -E remove coverage.info coverage.cleaned
+		COMMAND ${LCOV_EXECUTABLE} --remove coverage.info '${CMAKE_CURRENT_SOURCE_DIR}/tests/*' '/usr/*' '${CMAKE_CURRENT_SOURCE_DIR}/include/*' --output-file coverage.info
+		COMMAND ${GENHTML_EXECUTABLE} -o $ coverage coverage.info
 
 		WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 		COMMENT "Resetting code coverage counters to zero.\nProcessing code coverage counters and generating report."
 	)
 
+  add_custom_target(codecov
+                
+                make clean && make
+                COMMAND curl -s https://codecov.io/bash > codecov.sh
+                COMMAND bash codecov.sh -t cbf6ed32-e160-4fae-b568-406ea3944c23
+                COMMENT "Trying to send coverageinformation to codecov"
+                
+  )
 	# Show info where to find the report
- add_custom_command(TARGET coverage POST_BUILD
+ add_custom_command(TARGET coverage_report POST_BUILD
 		COMMAND ;
 		COMMENT "Open ./coverage/index.html in your browser to view the coverage report."
  )

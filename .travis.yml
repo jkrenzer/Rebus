@@ -20,6 +20,8 @@ matrix:
                                   packages:
                                           - valgrind
                                           - g++-4.9
+                                          - gcc-4.9
+                                          - lcov
                           code_climate:
                                  repo_token: 54bb6b4e88c97d912140ca77ed5660a7df0da72ea5385f222ed55cd0970dce2f
                                  
@@ -36,4 +38,5 @@ script:
                           - cmake .. 
                           - cmake --build . 
                           - ctest -V -D Experimental
+                          - make codecov
                           - cd ..

@@ -1,0 +1,4 @@
+ignore:
+  - "/usr/include/**/*"
+  - "tests/**/*"      
+  - "include/**/*"       
