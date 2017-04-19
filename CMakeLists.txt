@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 2.8.12)
-include(CTest)
+project(rebus)
+enable_testing()
 set(PROJECT_NAME Rebus)
 set(PROJECT_BRIEF_DESCRIPTION "C++ JSON ORM")
 set(DOCUMENTATION_DIR ${CMAKE_CURRENT_SOURCE_DIR}/doc)
@@ -42,7 +43,7 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Coverage" AND NOT MINGW)
 endif()
 
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Coverage")
-  add_custom_target(coverage_report
+  add_custom_target(coverage
 
 		# Cleanup lcov
 		${LCOV_EXECUTABLE} --directory . --zerocounters
@@ -52,23 +53,16 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Coverage")
 
 		# Capturing lcov counters and generating report
 		COMMAND ${LCOV_EXECUTABLE} --directory . --capture --output-file coverage.info
-		COMMAND ${LCOV_EXECUTABLE} --remove coverage.info '${CMAKE_CURRENT_SOURCE_DIR}/tests/*' '/usr/*' '${CMAKE_CURRENT_SOURCE_DIR}/include/*' --output-file coverage.info
-		COMMAND ${GENHTML_EXECUTABLE} -o $ coverage coverage.info
+		COMMAND ${LCOV_EXECUTABLE} --remove coverage.info '${CMAKE_CURRENT_SOURCE_DIR}/tests/*' '/usr/*' '${CMAKE_CURRENT_SOURCE_DIR}/include/*' --output-file coverage.cleaned
+		COMMAND ${GENHTML_EXECUTABLE} -o $ coverage coverage.cleaned
+		COMMAND ${CMAKE_COMMAND} -E remove coverage.info coverage.cleaned
 
 		WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 		COMMENT "Resetting code coverage counters to zero.\nProcessing code coverage counters and generating report."
 	)
 
-  add_custom_target(codecov
-                
-                make clean && make
-                COMMAND curl -s https://codecov.io/bash > codecov.sh
-                COMMAND bash codecov.sh -t cbf6ed32-e160-4fae-b568-406ea3944c23
-                COMMENT "Trying to send coverageinformation to codecov"
-                
-  )
 	# Show info where to find the report
- add_custom_command(TARGET coverage_report POST_BUILD
+ add_custom_command(TARGET coverage POST_BUILD
 		COMMAND ;
 		COMMENT "Open ./coverage/index.html in your browser to view the coverage report."
  )
@@ -82,7 +76,20 @@ endif()
 # find_package(LibXML++ REQUIRED)
 # find_package(Glibmm REQUIRED)
 find_package(Doxygen)
-# find_package(Jsoncpp REQUIRED)
+
+### Taget for generating Doxygen documentation (if Doxygen is found)
+
+if(DOXYGEN_FOUND)
+ configure_file(doc/Doxyfile ./Doxyfile)
+ add_custom_target(doc
+     ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+     #COMMAND ${CMAKE_MAKE_PROGRAM} -C ${CMAKE_CURRENT_SOURCE_DIR}/doc/latex/proc/
+     #COMMAND cmake -E copy ${CMAKE_CURRENT_SOURCE_DIR}/doc/latex/proc/refman.pdf ${CMAKE_CURRENT_SOURCE_DIR}/doc/latex/manual.pdf
+     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+     COMMENT "Generating API documentation with Doxygen" VERBATIM
+ )
+endif(DOXYGEN_FOUND)
+
 
  include_directories(${INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/src)
 # link_directories(${LINK_DIRS} ${Boost_LIBRARIES} ${LibXML++_LIBRARIES} ${glibmm_LIBRARIES} build/)
@@ -97,8 +104,6 @@ add_executable(test_inheritance tests/inheritance.cpp)
 #install(TARGETS test_visit RUNTIME DESTINATION bin)
 
 #Unit-Testing
-
-configure_file(CTestCustom.cmake CTestCustom.cmake)
 
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Coverage")
   target_link_libraries(test_json_diff gcov)

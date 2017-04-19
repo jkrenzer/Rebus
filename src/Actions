@@ -1,3 +1,12 @@
+/* -*-c++-*- 
+ * # Rebus
+ * This file is part of the Rebus ORM and RPC library and is 
+ * licensed under the terms of the LGPL-3.0 (see the file 
+ * "LICENSE" distributed inside the source-repository of this
+ * software).
+ */
+
+
 #ifndef ACTIONS_HPP
 #define ACTIONS_HPP
 #include <iostream>
