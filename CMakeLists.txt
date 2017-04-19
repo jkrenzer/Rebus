@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 2.8.12)
-project(rebus)
-enable_testing()
+include(CTest)
 set(PROJECT_NAME Rebus)
 set(PROJECT_BRIEF_DESCRIPTION "C++ JSON ORM")
 set(DOCUMENTATION_DIR ${CMAKE_CURRENT_SOURCE_DIR}/doc)
@@ -43,7 +42,7 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Coverage" AND NOT MINGW)
 endif()
 
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Coverage")
-  add_custom_target(coverage
+  add_custom_target(coverage_report
 
 		# Cleanup lcov
 		${LCOV_EXECUTABLE} --directory . --zerocounters
@@ -53,28 +52,28 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Coverage")
 
 		# Capturing lcov counters and generating report
 		COMMAND ${LCOV_EXECUTABLE} --directory . --capture --output-file coverage.info
-		COMMAND ${LCOV_EXECUTABLE} --remove coverage.info '${CMAKE_CURRENT_SOURCE_DIR}/tests/*' '/usr/*' '${CMAKE_CURRENT_SOURCE_DIR}/include/*' --output-file coverage.cleaned
-		COMMAND ${GENHTML_EXECUTABLE} -o $ coverage coverage.cleaned
-		COMMAND ${CMAKE_COMMAND} -E remove coverage.info coverage.cleaned
+		COMMAND ${LCOV_EXECUTABLE} --remove coverage.info '${CMAKE_CURRENT_SOURCE_DIR}/tests/*' '/usr/*' '${CMAKE_CURRENT_SOURCE_DIR}/include/*' --output-file coverage.info
+		COMMAND ${GENHTML_EXECUTABLE} -o $ coverage coverage.info
 
 		WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 		COMMENT "Resetting code coverage counters to zero.\nProcessing code coverage counters and generating report."
 	)
 
+  add_custom_target(codecov
+                
+                make clean && make
+                COMMAND curl -s https://codecov.io/bash > codecov.sh
+                COMMAND bash codecov.sh -t cbf6ed32-e160-4fae-b568-406ea3944c23
+                COMMENT "Trying to send coverageinformation to codecov"
+                
+  )
 	# Show info where to find the report
- add_custom_command(TARGET coverage POST_BUILD
+ add_custom_command(TARGET coverage_report POST_BUILD
 		COMMAND ;
 		COMMENT "Open ./coverage/index.html in your browser to view the coverage report."
  )
 endif()
  
-# 
-# set(BOOST_ALL_DYN_LINK TRUE)
-# set(Boost_DETAILED_FAILURE_MSG "ON")
-# 
-# find_package(Boost COMPONENTS program_options log REQUIRED)
-# find_package(LibXML++ REQUIRED)
-# find_package(Glibmm REQUIRED)
 find_package(Doxygen)
 
 ### Taget for generating Doxygen documentation (if Doxygen is found)
@@ -98,12 +97,9 @@ add_executable(test_json_diff tests/json_diff.cpp)
 add_executable(test_cpp_json_roundtrip tests/cpp_json_roundtrip.cpp)
 add_executable(test_inheritance tests/inheritance.cpp)
 
-#add_executable(rebus main.cpp)
-#target_link_libraries(rebus ${Boost_LIBRARIES})
-
-#install(TARGETS test_visit RUNTIME DESTINATION bin)
-
 #Unit-Testing
+
+configure_file(CTestCustom.cmake CTestCustom.cmake)
 
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Coverage")
   target_link_libraries(test_json_diff gcov)
