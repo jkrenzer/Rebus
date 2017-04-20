@@ -1,0 +1,63 @@
+/**************************** -*- c++ -*- **************************************
+ *              This file is distributed as part of Rebus                      *
+ *                (https://github.com/jmankiewicz/rebus)                       *
+ *                                                                             *
+ * Rebus is free software and is licensed  under the GNU Lesser General Public *
+ * License version 3 published by the Free Software Foundation.                *
+ *                                                                             *
+ * We hope that Rebus is useful for you but please keep in mind that this      *
+ * software is distributed WITHOUT ANY WARRANTY OF ANY KIND. By using Rebus    *
+ * you agree to the aforementioned licensing terms.                            *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * version 3 along with this software. If not, please refer to                 *
+ * <http://www.gnu.org/licenses/> to obtain a copy of the license.             *
+ *                                                                             *
+ *  Copyright (C) 2017 Jörn Mankiewicz                                         *
+ ******************************************************************************/
+
+#ifndef VISITOR_HPP
+#define VISITOR_HPP
+#include <iostream>
+
+namespace Rebus
+{
+    namespace Visitor
+    {
+        /**
+        * @brief Function to declare visitable members of classes.
+        * 
+        * @param Action p_Action:...
+        * @param MemberType p_MemberType:...
+        * @param action p_action:...
+        * @param member p_member:...
+        * @param name p_name:...
+        * @param description p_description:...
+        */
+        template <class Action, typename MemberType>
+        void member(Action& action, MemberType& member, const std::string& name)
+        {
+            action(member,  name);
+        }
+        
+        template <class Action, typename MemberType>
+        void hasOne(Action& action, MemberType* member, const std::string& name)
+        {
+            action.link(member,  name);
+        }
+        
+        template <class Action, typename MemberType, template <typename> class STLContainerType>
+        void hasMany(Action& action, STLContainerType<MemberType>& members, const std::string& name)
+        {
+            action.links(members,  name); //TODO What do we do to get the members?
+        }
+        
+        template <class ParentType, class Action, class CurrentType>
+        void inherit(Action& action, CurrentType* currentThis)
+        {
+            ParentType* inherited = static_cast<ParentType*>(currentThis);
+            inherited->description(action);
+        }
+    }
+}
+#endif

@@ -1,11 +1,11 @@
 #include <iostream>
 #include <sstream>
 
-#include "Tests"
-#include "Actions"
-#include "Visitors"
-#include "Pointer"
-#include "Json"
+#include "Test"
+#include "Rebus/Action"
+#include "Rebus/Visitor"
+#include "Rebus/Pointer"
+#include "Rebus/Json"
 
 #define DEBUG_OUTPUT 0
 
@@ -29,10 +29,10 @@ public:
     template <class Action>
     void description(Action& act)
     {
-        Rebus::member(act,  a, "a");
-        Rebus::member(act,  b, "b");
-        Rebus::member(act,  c, "c");
-        Rebus::member(act,  d, "d");
+        Rebus::Visitor::member(act,  a, "a");
+        Rebus::Visitor::member(act,  b, "b");
+        Rebus::Visitor::member(act,  c, "c");
+        Rebus::Visitor::member(act,  d, "d");
     }
     
     const bool operator==(const Test& other) const
@@ -46,7 +46,7 @@ int main()
     try
     {
     std::cout << "Rebus Unit-Test: C++-JSON-Roundtrip" <<  std::endl;
-    Rebus::Pointer<Test> ptr(new Test);
+    Rebus::Pointer::Pointer<Test> ptr(new Test);
     //Declaring test values
     int testA = 42;
     std::string testB("Changed");
@@ -59,13 +59,13 @@ int main()
     ptr.modify()->d = testD;
     //Roundtrip to JSON-land an back
     JsonLib::json value;
-    Rebus::JsonIO::Actions::Encode action(value);
+    Rebus::JsonIO::Action::Encode action(value);
     ptr.modify()->description(action);
 #if DEBUG_OUTPUT
     std::cout << action.rootRef.dump(4) << std::endl;
 #endif
-    Rebus::Pointer<Test> ptr2(new Test);
-    Rebus::JsonIO::Actions::Decode action2(action.rootRef);
+    Rebus::Pointer::Pointer<Test> ptr2(new Test);
+    Rebus::JsonIO::Action::Decode action2(action.rootRef);
     ptr2.modify()->description(action2);
     //There and back again, now test if everything is in place
     if (*ptr == *ptr2)

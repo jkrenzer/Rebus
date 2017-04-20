@@ -1,7 +1,7 @@
 #include <iostream>
 #include <exception>
-#include "Json"
-#include "Tests"
+#include "Rebus/Json"
+#include "Test"
 
 int main()
 {

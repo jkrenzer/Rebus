@@ -1,6 +1,25 @@
+/**************************** -*- c++ -*- **************************************
+ *              This file is distributed as part of Rebus                      *
+ *                (https://github.com/jmankiewicz/rebus)                       *
+ *                                                                             *
+ * Rebus is free software and is licensed  under the GNU Lesser General Public *
+ * License version 3 published by the Free Software Foundation.                *
+ *                                                                             *
+ * We hope that Rebus is useful for you but please keep in mind that this      *
+ * software is distributed WITHOUT ANY WARRANTY OF ANY KIND. By using Rebus    *
+ * you agree to the aforementioned licensing terms.                            *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * version 3 along with this software. If not, please refer to                 *
+ * <http://www.gnu.org/licenses/> to obtain a copy of the license.             *
+ *                                                                             *
+ *  Copyright (C) 2017 Jörn Mankiewicz                                         *
+ ******************************************************************************/
+
+
 #ifndef JSON_HPP
 #define JSON_HPP
-# include <sstream>
+#include <sstream>
 #include "nlohmann/json.hpp"
 #include "diff-match-patch-cpp-stl/diff_match_patch.h"
 
@@ -13,7 +32,7 @@ namespace Rebus
     namespace JsonIO
     {
         
-        namespace Actions
+        namespace Action
         {
             class Encode
             {
@@ -125,40 +144,40 @@ namespace Rebus
         public:
             
             template <class Type>
-            JsonLib::json objToJson(::Rebus::Pointer<Type> obj);
+            JsonLib::json objToJson(::Rebus::Pointer::Pointer<Type> obj);
             
             template <class Type>
-              ::Rebus::Pointer<Type> JsonToObj(JsonLib::json json);
+              ::Rebus::Pointer::Pointer<Type> JsonToObj(JsonLib::json json);
         };
     }
 }
 
-Rebus::JsonIO::Actions::Encode::Encode(JsonLib::json& rootRef) : rootRef(rootRef)
+Rebus::JsonIO::Action::Encode::Encode(JsonLib::json& rootRef) : rootRef(rootRef)
 {}
 
 template <typename Type>
-void Rebus::JsonIO::Actions::Encode::operator()(Type& ref, const std::string& name)
+void Rebus::JsonIO::Action::Encode::operator()(Type& ref, const std::string& name)
 {   
     this->rootRef[name] = ref;
 }
 
-Rebus::JsonIO::Actions::Decode::Decode(JsonLib::json& rootRef) : rootRef(rootRef)
+Rebus::JsonIO::Action::Decode::Decode(JsonLib::json& rootRef) : rootRef(rootRef)
 {}
 
 template <typename Type>
-void Rebus::JsonIO::Actions::Decode::operator()(Type& ref, const std::string& name)
+void Rebus::JsonIO::Action::Decode::operator()(Type& ref, const std::string& name)
 {
     ref  = this->rootRef[name];
 }
 
 template <typename Type>
-JsonLib::json Rebus::JsonIO::Converter::objToJson(Rebus::Pointer<Type> obj)
+JsonLib::json Rebus::JsonIO::Converter::objToJson(Rebus::Pointer::Pointer<Type> obj)
 {
     
 }
 
 template <typename Type>
-Rebus::Pointer<Type> Rebus::JsonIO::Converter::JsonToObj(JsonLib::json json)
+Rebus::Pointer::Pointer<Type> Rebus::JsonIO::Converter::JsonToObj(JsonLib::json json)
 {
 }
 

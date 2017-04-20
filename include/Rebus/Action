@@ -1,0 +1,39 @@
+/**************************** -*- c++ -*- **************************************
+ *              This file is distributed as part of Rebus                      *
+ *                (https://github.com/jmankiewicz/rebus)                       *
+ *                                                                             *
+ * Rebus is free software and is licensed  under the GNU Lesser General Public *
+ * License version 3 published by the Free Software Foundation.                *
+ *                                                                             *
+ * We hope that Rebus is useful for you but please keep in mind that this      *
+ * software is distributed WITHOUT ANY WARRANTY OF ANY KIND. By using Rebus    *
+ * you agree to the aforementioned licensing terms.                            *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * version 3 along with this software. If not, please refer to                 *
+ * <http://www.gnu.org/licenses/> to obtain a copy of the license.             *
+ *                                                                             *
+ *  Copyright (C) 2017 Jörn Mankiewicz                                         *
+ ******************************************************************************/
+
+#ifndef ACTION_HPP
+#define ACTION_HPP
+#include <iostream>
+
+namespace Rebus
+{
+    namespace Action
+    {
+        class Print
+        {
+        public:
+
+            template <typename Type>
+            void operator()(Type& ref, const std::string& name)
+            {
+                std::cout << name << ": " << ref << std::endl;
+            }
+        };
+    }
+}
+#endif
