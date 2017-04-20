@@ -22,6 +22,8 @@ matrix:
                                           - g++-4.9
                                           - gcc-4.9
                                           - lcov
+                                          - python3
+                                          - doxygen
                           code_climate:
                                  repo_token: 54bb6b4e88c97d912140ca77ed5660a7df0da72ea5385f222ed55cd0970dce2f
                                  
@@ -36,7 +38,7 @@ script:
                           - $CXX --version
                           - mkdir build && cd build 
                           - cmake -DCMAKE_BUILD_TYPE=Coverage .. 
-                          - cmake --build . 
+                          - make codecov_test 
                           - ctest -V -D Experimental
-                          - make codecov
+                          - make codecov_doc
                           - cd ..

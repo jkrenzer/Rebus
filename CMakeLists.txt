@@ -1,11 +1,13 @@
 cmake_minimum_required(VERSION 2.8.12)
-include(CTest)
 set(PROJECT_NAME Rebus)
 set(PROJECT_BRIEF_DESCRIPTION "C++ JSON ORM")
 set(DOCUMENTATION_DIR ${CMAKE_CURRENT_SOURCE_DIR}/doc)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
 set(CMAKE_TOOLCHAIN_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/toolchains)
 #set(PROJECT_LOGO)
+
+include(CTest)
+include(${CMAKE_MODULE_PATH}/FindPythonModule.cmake)
 
 ### Configuration switches
 
@@ -15,7 +17,15 @@ set(BUILD_SHARED_LIBS TRUE)
 ###
 
 add_compile_options(-std=c++11) #Enable C++11 support
-# 
+###
+
+find_package(Doxygen)
+
+if("${CMAKE_BUILD_TYPE}" STREQUAL "Coverage")
+  find_package(PythonInterp)
+endif()
+###
+
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug" AND NOT MINGW)
   message("Enabling GCC Debug-Flags")
   add_compile_options(-g -O0 -Wall -W -Wshadow -Wunused-variable -Wunused-parameter -Wunused-function -Wunused -Wno-system-headers -Wno-deprecated -Woverloaded-virtual -Wwrite-strings) #Enable debugging-output, no-optimization (for valgrind and gdb)
@@ -42,39 +52,63 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Coverage" AND NOT MINGW)
 endif()
 
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Coverage")
-  add_custom_target(coverage_report
-
-		# Cleanup lcov
+  add_custom_target(test_coverage
+                
+                # Cleanup lcov
 		${LCOV_EXECUTABLE} --directory . --zerocounters
-
-		# Run tests
-		COMMAND make test
+		#Clean and build anew
+		COMMAND make clean && make test
 
 		# Capturing lcov counters and generating report
-		COMMAND ${LCOV_EXECUTABLE} --directory . --capture --output-file coverage.info
-		COMMAND ${LCOV_EXECUTABLE} --remove coverage.info '${CMAKE_CURRENT_SOURCE_DIR}/tests/*' '/usr/*' '${CMAKE_CURRENT_SOURCE_DIR}/include/*' --output-file coverage.info
-		COMMAND ${GENHTML_EXECUTABLE} -o $ coverage coverage.info
-
-		WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-		COMMENT "Resetting code coverage counters to zero.\nProcessing code coverage counters and generating report."
-	)
-
-  add_custom_target(codecov
-                
-                make clean && make
-                COMMAND curl -s https://codecov.io/bash > codecov.sh
-                COMMAND bash codecov.sh -t cbf6ed32-e160-4fae-b568-406ea3944c23
-                COMMENT "Trying to send coverageinformation to codecov"
-                
+		COMMAND ${LCOV_EXECUTABLE} --directory . --capture --output-file test-coverage.info
+		COMMAND ${LCOV_EXECUTABLE} --remove test-coverage.info '${CMAKE_CURRENT_SOURCE_DIR}/tests/*' '/usr/*' '${CMAKE_CURRENT_SOURCE_DIR}/deps/*' --output-file test-coverage.info
   )
-	# Show info where to find the report
- add_custom_command(TARGET coverage_report POST_BUILD
+  if(DOXYGEN_FOUND)
+    find_python_module(coverxygen)
+    add_custom_target(doxygen_coverage
+                    ${PYTHON_EXECUTABLE} -m coverxygen --xml-dir ${CMAKE_CURRENT_SOURCE_DIR}/doc/xml --src-dir ${CMAKE_CURRENT_SOURCE_DIR} --output doxygen-coverage.info
+                    DEPENDS doc
+    )
+    add_custom_target(codecov_doc
+                COMMAND bash codecov.sh -t cbf6ed32-e160-4fae-b568-406ea3944c23 -X gcov -f doxygen-coverage.info -F documentation
+                COMMENT "Trying to send doc-coverage-information to codecov"
+                DEPENDS fetch_codecove doxygen_coverage
+    )
+    add_custom_target(doc_coverage_report
+		${GENHTML_EXECUTABLE} -o $ doc_coverage doxygen-coverage.info
+		WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+		DEPENDS doxygen_coverage
+		COMMENT "Generating documentation-coverage report."
+	)
+    # Show info where to find the report
+    add_custom_command(TARGET doc_coverage_report POST_BUILD
+                    COMMAND ;
+                    COMMENT "Open ./doc_coverage/index.html in your browser to view the coverage report."
+    )
+  endif()
+  add_custom_target(test_coverage_report
+		${GENHTML_EXECUTABLE} -o $ test_coverage test-coverage.info
+		WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+		COMMENT "Generating test-coverage report."
+	)
+  # Show info where to find the report
+  add_custom_command(TARGET test_coverage_report POST_BUILD
 		COMMAND ;
-		COMMENT "Open ./coverage/index.html in your browser to view the coverage report."
- )
+		COMMENT "Open ./test_coverage/index.html in your browser to view the coverage report."
+  )
+  add_custom_target(fetch_codecove
+                curl -s https://codecov.io/bash > codecov.sh
+  )
+  add_custom_target(codecov_test
+                bash codecov.sh -t cbf6ed32-e160-4fae-b568-406ea3944c23 -X gcov -f test-coverage.info -F tests
+                COMMENT "Trying to send code-coverage-information to codecov"
+                DEPENDS fetch_codecove test_coverage
+  )
+  
+	
 endif()
  
-find_package(Doxygen)
+
 
 ### Taget for generating Doxygen documentation (if Doxygen is found)
 
@@ -90,13 +124,16 @@ if(DOXYGEN_FOUND)
 endif(DOXYGEN_FOUND)
 
 
- include_directories(${INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/src)
+ include_directories(${INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/deps)
 # link_directories(${LINK_DIRS} ${Boost_LIBRARIES} ${LibXML++_LIBRARIES} ${glibmm_LIBRARIES} build/)
 
 add_executable(test_json_diff tests/json_diff.cpp)
 add_executable(test_cpp_json_roundtrip tests/cpp_json_roundtrip.cpp)
 add_executable(test_inheritance tests/inheritance.cpp)
 
+add_custom_target(build_tests
+    DEPENDS test_json_diff test_cpp_json_roundtrip test_inheritance
+)
 #Unit-Testing
 
 configure_file(CTestCustom.cmake CTestCustom.cmake)
@@ -107,6 +144,7 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Coverage")
   target_link_libraries(test_inheritance gcov)
 endif()
 
+add_test(build_test_code "${CMAKE_COMMAND}" --build ${CMAKE_BINARY_DIR} --target build_tests)
 add_test(json_diff test_json_diff)
 add_test(cpp_json_roundtrip test_cpp_json_roundtrip)
 add_test(inheritance test_inheritance)
