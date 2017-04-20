@@ -2,3 +2,13 @@ ignore:
   - "/usr/include/.*"
   - "tests/.*"      
   - "deps/.*"       
+
+coverage:
+    status:
+        project:
+            default: off
+            tests:
+                flags: tests
+            documentation:
+                flags: documentation
+                target: 80%
