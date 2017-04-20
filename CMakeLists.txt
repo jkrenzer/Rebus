@@ -74,15 +74,21 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Coverage")
  )
 endif()
  
-# 
-# set(BOOST_ALL_DYN_LINK TRUE)
-# set(Boost_DETAILED_FAILURE_MSG "ON")
-# 
-# find_package(Boost COMPONENTS program_options log REQUIRED)
-# find_package(LibXML++ REQUIRED)
-# find_package(Glibmm REQUIRED)
 find_package(Doxygen)
-# find_package(Jsoncpp REQUIRED)
+
+### Taget for generating Doxygen documentation (if Doxygen is found)
+
+if(DOXYGEN_FOUND)
+ configure_file(doc/Doxyfile ./Doxyfile)
+ add_custom_target(doc
+     ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+     #COMMAND ${CMAKE_MAKE_PROGRAM} -C ${CMAKE_CURRENT_SOURCE_DIR}/doc/latex/proc/
+     #COMMAND cmake -E copy ${CMAKE_CURRENT_SOURCE_DIR}/doc/latex/proc/refman.pdf ${CMAKE_CURRENT_SOURCE_DIR}/doc/latex/manual.pdf
+     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+     COMMENT "Generating API documentation with Doxygen" VERBATIM
+ )
+endif(DOXYGEN_FOUND)
+
 
  include_directories(${INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/src)
 # link_directories(${LINK_DIRS} ${Boost_LIBRARIES} ${LibXML++_LIBRARIES} ${glibmm_LIBRARIES} build/)
@@ -90,11 +96,6 @@ find_package(Doxygen)
 add_executable(test_json_diff tests/json_diff.cpp)
 add_executable(test_cpp_json_roundtrip tests/cpp_json_roundtrip.cpp)
 add_executable(test_inheritance tests/inheritance.cpp)
-
-#add_executable(rebus main.cpp)
-#target_link_libraries(rebus ${Boost_LIBRARIES})
-
-#install(TARGETS test_visit RUNTIME DESTINATION bin)
 
 #Unit-Testing
 
