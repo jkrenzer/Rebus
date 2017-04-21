@@ -36,9 +36,9 @@ matrix:
 script: 
                           - uname -a
                           - $CXX --version
-                          - python --version
+                          - python3 --version
                           - mkdir build && cd build 
-                          - python -m pip install coverxygen
+                          - python3 -m pip install coverxygen
                           - cmake -DCMAKE_BUILD_TYPE=Coverage .. 
                           - make codecov_test 
                           - ctest -V -D Experimental
