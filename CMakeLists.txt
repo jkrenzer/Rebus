@@ -22,7 +22,7 @@ add_compile_options(-std=c++11) #Enable C++11 support
 find_package(Doxygen)
 
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Coverage")
-  find_package(PythonInterp VERSION 3 REQUIRED)
+  find_package(PythonInterp 3 REQUIRED)
 endif()
 ###
 
