@@ -1,5 +1,5 @@
-[![Build Status](https://travis-ci.org/jmankiewicz/Rebus.svg?branch=master)](https://travis-ci.org/jmankiewicz/Rebus) [![GitHub issues](https://img.shields.io/github/issues/jmankiewicz/Rebus.svg)]() [![codecov](https://codecov.io/gh/jmankiewicz/Rebus/branch/master/graph/badge.svg)](https://codecov.io/gh/jmankiewicz/Rebus) 
-[![Code Climate](https://img.shields.io/codeclimate/github/jmankiewicz/Rebus.svg)](https://codeclimate.com/github/jmankiewicz/Rebus)
+[![Build Status](https://travis-ci.org/jkrenzer/Rebus.svg?branch=master)](https://travis-ci.org/jkrenzer/Rebus) [![GitHub issues](https://img.shields.io/github/issues/jkrenzer/Rebus.svg)]() [![codecov](https://codecov.io/gh/jkrenzer/Rebus/branch/master/graph/badge.svg)](https://codecov.io/gh/jkrenzer/Rebus) 
+[![Code Climate](https://img.shields.io/codeclimate/github/jkrenzer/Rebus.svg)](https://codeclimate.com/github/jkrenzer/Rebus)
 
 Also see the [Dashboard](http://my.cdash.org/index.php?project=Rebus) for more information on the builds and tests.
 
