@@ -38,7 +38,7 @@ matrix:
                           - sudo python3 -m pip install coverxygen
                           - sudo docker pull codeclimate/codeclimate
                           - git clone https://github.com/antiagainst/codeclimate-cppcheck.git
-                          - cd codeclimate-cppcheck && sudo docker build -t codeclimate/codeclimate-cppcheck && cd ..
+                          - cd codeclimate-cppcheck && sudo docker build -t codeclimate/codeclimate-cppcheck . && cd ..
 
 
 script:
