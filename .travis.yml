@@ -26,6 +26,7 @@ matrix:
                                           - python3-pip
                                           - doxygen
                                           - cppcheck
+                                          - docker
                           code_climate:
                                  repo_token: 54bb6b4e88c97d912140ca77ed5660a7df0da72ea5385f222ed55cd0970dce2f
 
@@ -34,6 +35,11 @@ matrix:
                           - sudo apt-get install -y libboost1.55-dev
                             # make sure CXX is correctly set
                           - if [[ "${COMPILER}" != "" ]]; then export CXX=${COMPILER}; fi
+                          - sudo python3 -m pip install coverxygen
+                          - sudo docker pull codeclimate/codeclimate
+                          - git clone https://github.com/antiagainst/codeclimate-cppcheck.git
+                          - cd codeclimate-cppcheck && sudo docker build -t codeclimate/codeclimate-cppcheck && cd ..
+
 
 script:
                           - uname -a
@@ -43,12 +49,9 @@ script:
                           - cmake -DCMAKE_BUILD_TYPE=Debug ..
                           - make test
 after_script:
-                          - python3 -m pip install coverxygen
                           - cmake -DCMAKE_BUILD_TYPE=Coverage ..
                           - make codecov_test
                           - ctest -V -D Experimental
                           - make codecov_doc
-                          - curl -L https://github.com/codeclimate/codeclimate/archive/master.tar.gz | tar xvz
-                          - cd codeclimate-* && sudo make install && cd ..
                           - codeclimate engines:enable cppcheck
                           - cd .. && codeclimate analyze

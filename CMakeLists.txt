@@ -105,7 +105,6 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Coverage")
                 DEPENDS fetch_codecove test_coverage
   )
 
-
 endif()
 
 
