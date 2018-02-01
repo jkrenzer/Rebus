@@ -154,6 +154,7 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Coverage")
   target_link_libraries(test_cpp_json_roundtrip gcov)
   target_link_libraries(test_inheritance gcov)
   target_link_libraries(test_basic_types gcov)
+  target_link_libraries(rebus_type gcov)
 endif()
 
 add_test(build_test_code "${CMAKE_COMMAND}" --build ${CMAKE_BINARY_DIR} --target build_tests)
