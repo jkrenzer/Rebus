@@ -53,5 +53,7 @@ after_script:
                           - make codecov_test
                           - ctest -V -D Experimental
                           - make codecov_doc
-                          - codeclimate engines:enable cppcheck
-                          - cd .. && codeclimate analyze
+                          - cd ..
+                          - export COCLICODE=11892789614367693df09da1e948472c1097cc7d076623df2d42c1ffde7a81ab
+                          - docker run --env CODECLIMATE_CODE="$COCLICODE" --volume "$COCLICODE":/code --volume /var/run/docker.sock:/var/run/docker.sock --volume /tmp/cc:/tmp/cc codeclimate/codeclimate engines:enable cppcheck
+                          - docker run --env CODECLIMATE_CODE="$COCLICODE" --volume "$COCLICODE":/code --volume /var/run/docker.sock:/var/run/docker.sock --volume /tmp/cc:/tmp/cc codeclimate/codeclimate analyze

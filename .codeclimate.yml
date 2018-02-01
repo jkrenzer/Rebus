@@ -3,6 +3,11 @@ version: "2"
 plugins:
   cppcheck:
     enabled: true
+    includes:
+      - include/
+    exclude_paths:
+      - doc/
+      - build/
   fixme:
     enabled: true
     exclude_paths:

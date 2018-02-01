@@ -1,12 +1,16 @@
-ignore:
-  - "deps/.*"       
-
 coverage:
-    status:
-        project:
-            default: off
-            tests:
-                flags: tests
-            documentation:
-                flags: documentation
-                target: 80%
+  status:
+    project:
+      default: off
+      tests:
+        flags: tests
+      documentation:
+        flags: documentation
+        target: 80%
+flags:
+  tests:
+    - include/
+    - src/
+  documentation:
+    - include/
+    - src/
