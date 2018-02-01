@@ -70,7 +70,7 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Coverage")
                     DEPENDS doc
     )
     add_custom_target(codecov_doc
-                COMMAND bash codecov.sh -t cbf6ed32-e160-4fae-b568-406ea3944c23 -X gcov -f doxygen-coverage.info -F documentation
+                COMMAND bash codecov.sh -t cbf6ed32-e160-4fae-b568-406ea3944c23 -f doxygen-coverage.info -F documentation
                 COMMENT "Trying to send doc-coverage-information to codecov"
                 DEPENDS fetch_codecove doxygen_coverage
     )
@@ -100,7 +100,7 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Coverage")
                 curl -s https://codecov.io/bash > codecov.sh
   )
   add_custom_target(codecov_test
-                bash codecov.sh -t cbf6ed32-e160-4fae-b568-406ea3944c23 -X gcov -f test-coverage.info -F tests
+                bash codecov.sh -t cbf6ed32-e160-4fae-b568-406ea3944c23 -f test-coverage.info -F tests
                 COMMENT "Trying to send code-coverage-information to codecov"
                 DEPENDS fetch_codecove test_coverage
   )
