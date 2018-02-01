@@ -1,0 +1,21 @@
+---
+version: "2"
+plugins:
+  cppcheck:
+    enabled: true
+  fixme:
+    enabled: true
+    exclude_paths:
+      - doc/
+      - build/
+  markdownlint:
+    enabled: true
+    checks:
+      MD002: # "First header should be a h1 header"
+        enabled: false
+  shellcheck:
+    enabled: true
+exclude_patterns:
+  - .bundle/
+  - build/**/*
+  - doc/**/*

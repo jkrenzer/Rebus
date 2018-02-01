@@ -1,6 +1,4 @@
 ignore:
-  - "/usr/include/.*"
-  - "tests/.*"      
   - "deps/.*"       
 
 coverage:
