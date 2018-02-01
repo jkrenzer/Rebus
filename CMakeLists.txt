@@ -30,12 +30,12 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug" AND NOT MINGW)
   message("Enabling GCC Debug-Flags")
   add_compile_options(-g -O0 -Wall -W -Wshadow -Wunused-variable -Wunused-parameter -Wunused-function -Wunused -Wno-system-headers -Wno-deprecated -Woverloaded-virtual -Wwrite-strings) #Enable debugging-output, no-optimization (for valgrind and gdb)
   set(CMAKE_VERBOSE_MAKEFILE ON)
-  
+
   elseif("${CMAKE_BUILD_TYPE}" STREQUAL "Debug" AND MINGW)
   message("Enabling GCC Debug-Flags with DWARF output")
   add_compile_options(-gdwarf-4 -O0 -Wall -W -Wshadow -Wunused-variable -Wunused-parameter -Wunused-function -Wunused -Wno-system-headers -Wno-deprecated -Woverloaded-virtual -Wwrite-strings)
   set(CMAKE_VERBOSE_MAKEFILE ON)
- 
+
 endif()
 
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Coverage" AND NOT MINGW)
@@ -43,17 +43,17 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Coverage" AND NOT MINGW)
   add_compile_options(-g -O0 -Wall -W --coverage -fprofile-arcs -ftest-coverage) #Enable debugging-output, no-optimization (for valgrind and gdb)
   set(CMAKE_C_FLAGS="-g -O0 -Wall -W --coverage -fprofile-arcs -ftest-coverage")
   set(CMAKE_VERBOSE_MAKEFILE ON)
-  find_package(LCov REQUIRED)  
+  find_package(LCov REQUIRED)
   elseif("${CMAKE_BUILD_TYPE}" STREQUAL "Coverage" AND MINGW)
   message("Enabling GCC Debug-Flags with DWARF output")
   add_compile_options(-gdwarf-4 -g -O0 -Wall -W --coverage -fprofile-arcs -ftest-coverage)
   set(CMAKE_VERBOSE_MAKEFILE ON)
- 
+
 endif()
 
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Coverage")
   add_custom_target(test_coverage
-                
+
                 # Cleanup lcov
 		${LCOV_EXECUTABLE} --directory . --zerocounters
 		#Clean and build anew
@@ -104,10 +104,10 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Coverage")
                 COMMENT "Trying to send code-coverage-information to codecov"
                 DEPENDS fetch_codecove test_coverage
   )
-  
-	
+
+
 endif()
- 
+
 
 
 ### Taget for generating Doxygen documentation (if Doxygen is found)
@@ -127,12 +127,23 @@ endif(DOXYGEN_FOUND)
  include_directories(${INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/deps)
 # link_directories(${LINK_DIRS} ${Boost_LIBRARIES} ${LibXML++_LIBRARIES} ${glibmm_LIBRARIES} build/)
 
+# Libraries
+add_library(rebus_type
+  src/Rebus/Type/BasicTypes/Char.cpp
+  src/Rebus/Type/BasicTypes/Double.cpp
+  src/Rebus/Type/BasicTypes/Float.cpp
+  src/Rebus/Type/BasicTypes/Int.cpp
+  src/Rebus/Type/BasicTypes/String.cpp
+)
+
 add_executable(test_json_diff tests/json_diff.cpp)
 add_executable(test_cpp_json_roundtrip tests/cpp_json_roundtrip.cpp)
 add_executable(test_inheritance tests/inheritance.cpp)
+add_executable(test_basic_types tests/basic_types.cpp)
+target_link_libraries(test_basic_types rebus_type)
 
 add_custom_target(build_tests
-    DEPENDS test_json_diff test_cpp_json_roundtrip test_inheritance
+    DEPENDS test_json_diff test_cpp_json_roundtrip test_inheritance test_basic_types
 )
 #Unit-Testing
 
@@ -142,9 +153,11 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Coverage")
   target_link_libraries(test_json_diff gcov)
   target_link_libraries(test_cpp_json_roundtrip gcov)
   target_link_libraries(test_inheritance gcov)
+  target_link_libraries(test_basic_types gcov)
 endif()
 
 add_test(build_test_code "${CMAKE_COMMAND}" --build ${CMAKE_BINARY_DIR} --target build_tests)
 add_test(json_diff test_json_diff)
 add_test(cpp_json_roundtrip test_cpp_json_roundtrip)
 add_test(inheritance test_inheritance)
+add_test(basic_types test_basic_types)
