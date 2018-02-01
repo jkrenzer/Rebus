@@ -1,5 +1,0 @@
-#include <iostream>
-#include <exception>
-
-#define SUCCESS 0
-#define FAILURE 1

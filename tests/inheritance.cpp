@@ -1,18 +1,32 @@
+/**
+ * @Author: Jörn Krenzer <jkrenzer>
+ * @Date:   20-04-2017
+ * @Email:  joern.krenzer@gmx.de
+ * @Project: Rebus (https://github.com/jkrenzer/rebus)
+ * @Filename: inheritance.cpp
+ * @Last modified by:   jkrenzer
+ * @Last modified time: 31-01-2018
+ * @License: LGPL Version 3
+ * @Copyright: This software and all its parts are subject to the conditions of the above mentioned license. See the LICENSE file for more information.
+ */
+
+
+
 #include <iostream>
 #include <sstream>
 #include <exception>
 
-#include "Test"
-#include "Rebus/Action"
-#include "Rebus/Visitor"
-#include "Rebus/Pointer"
-#include "Rebus/Json"
+#include "Test.hpp"
+#include "Rebus/Action.hpp"
+#include "Rebus/Visitor.hpp"
+#include "Rebus/Pointer.hpp"
+#include "Rebus/Json.hpp"
 
 class Test
 {
 protected:
     int a;
-    
+
 
 public:
   std::string b;

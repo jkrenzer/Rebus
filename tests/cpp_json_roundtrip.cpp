@@ -1,11 +1,25 @@
+/**
+ * @Author: Jörn Krenzer <jkrenzer>
+ * @Date:   20-04-2017
+ * @Email:  joern.krenzer@gmx.de
+ * @Project: Rebus (https://github.com/jkrenzer/rebus)
+ * @Filename: cpp_json_roundtrip.cpp
+ * @Last modified by:   jkrenzer
+ * @Last modified time: 31-01-2018
+ * @License: LGPL Version 3
+ * @Copyright: This software and all its parts are subject to the conditions of the above mentioned license. See the LICENSE file for more information.
+ */
+
+
+
 #include <iostream>
 #include <sstream>
 
-#include "Test"
-#include "Rebus/Action"
-#include "Rebus/Visitor"
-#include "Rebus/Pointer"
-#include "Rebus/Json"
+#include "Test.hpp"
+#include "Rebus/Action.hpp"
+#include "Rebus/Visitor.hpp"
+#include "Rebus/Pointer.hpp"
+#include "Rebus/Json.hpp"
 
 #define DEBUG_OUTPUT 0
 
@@ -17,14 +31,14 @@ public:
   double c;
   enum enumerate {d1, d2};
   enumerate d;
-  
+
     Test()
     {
         a = 15;
         b = std::string("Original");
         c = 3.1415 ;
         d = d1;
-        
+
     }
     template <class Action>
     void description(Action& act)
@@ -34,7 +48,7 @@ public:
         Rebus::Visitor::member(act,  c, "c");
         Rebus::Visitor::member(act,  d, "d");
     }
-    
+
     const bool operator==(const Test& other) const
     {
         return this->a == other.a && this->b == other.b && this->c == other.c && this->d == other.d;
@@ -51,7 +65,7 @@ int main()
     int testA = 42;
     std::string testB("Changed");
     double testC = 51.08;
-    Test::enumerate testD = Test::d2; 
+    Test::enumerate testD = Test::d2;
     //Setting testvalues
     ptr.modify()->a = testA;
     ptr.modify()->b = testB;

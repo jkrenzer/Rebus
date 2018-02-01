@@ -1,22 +1,36 @@
+/**
+ * @Author: Jörn Krenzer <jkrenzer>
+ * @Date:   20-04-2017
+ * @Email:  joern.krenzer@gmx.de
+ * @Project: Rebus (https://github.com/jkrenzer/rebus)
+ * @Filename: json_diff.cpp
+ * @Last modified by:   jkrenzer
+ * @Last modified time: 31-01-2018
+ * @License: LGPL Version 3
+ * @Copyright: This software and all its parts are subject to the conditions of the above mentioned license. See the LICENSE file for more information.
+ */
+
+
+
 #include <iostream>
 #include <exception>
-#include "Rebus/Json"
-#include "Test"
+#include "Rebus/Json.hpp"
+#include "Test.hpp"
 
 int main()
 {
-    try 
+    try
     {
         std::cout << "Rebus Unit-Test: Diff and Patch of JSON" <<  std::endl;
         Rebus::JsonIO::Json j_original;
         Rebus::JsonIO::Json j_changed;
         try
-        {    
+        {
             j_original = {
                 {"baz", {"one", "two", "three"}},
                 {"foo", "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam VOLUPTUA."}
             };
-            
+
             j_changed = {
                 {"baz", {"four", "five", "six"}},
                 {"foo", "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua."}
@@ -37,7 +51,7 @@ int main()
             std::cout << "Exception while generating diff." << std::endl;
             throw e;
         }
-        std::cout << "Diff: " << patch.dump(4)  << std::endl; 
+        std::cout << "Diff: " << patch.dump(4)  << std::endl;
         std::cout << "Patching..." << std::endl;
         Rebus::JsonIO::Json j_patched;
         try
@@ -49,7 +63,7 @@ int main()
             std::cout << "Exception while patching." << std::endl;
             throw e;
         }
-        
+
         if (j_patched == j_changed)
         {
             std::cout << "Patched was sucessfully applied. Test succeeded." <<  std::endl;
